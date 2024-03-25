@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        font-family: Roboto, sans-serif;
+        display: grid;
+        place-content: center;
+        min-height: 100vh;
+      }
+ 
+      h1 {
+        color: crimson;
+      }
+ 
+      .user-name {
+        font-style: italic;
+        font-weight: bold;
+      }
+ 
+      .user-pic {
+        border-radius: 50%;
+        height: 175px;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+      }
+ 
+      .user-msg {
+        font-size: 24px;
+      }
+ 
+      .user-container {
+        /* background: crimson; */
+      }
+    </style>
+  </head>
+  <body>
+    <!-- mustache -->
+    {% for user in users %}
+    <div class="user-container">
+      <img class="user-pic" src="{{user.pic}}" alt="Profile picture" />
+      <p class="user-msg">
+        {% if user.pro %}
+        <span> Hello, <span class="user-name">{{user.name}} 🚀</span> </span>
+        {% else %}
+        <span> Hello, <span class="user-name">{{user.name}} 🎊</span> </span>
+        {% endif %}
+      </p>
+    </div>
+    {% endfor %}
+  </body>
+</html>

@@ -37,7 +37,8 @@ make sure your myenv is activated
 ```flask --app main run```
 >only if the file is app.py ```flask run```
 
-> for development perposes 
+> for development purposes 
+> if you dont want to restart the server the whole time
 ```
 flask run ---debug
 ```
@@ -49,6 +50,7 @@ flask run ---debug
 2. micro framework
 3. Ready made tools to implemented the API (CRUD)
 4. lightweight
+5. gives ready made tools to implement REST API
 
 # Django vs Flask
 - django has full operations already in-buit, no freedom to edit the methods

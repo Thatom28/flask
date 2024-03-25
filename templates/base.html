@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        h1{
+            color: crimson;
+        }
+        body{
+            display: grid;
+            font-size:24px;
+        }
+        .user-container{
+            text-align: center;
+        }
+        .user-pic{
+            border-radius: 50%;
+            height: 170px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+        }
+        .user-name{
+            font-style: italic;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">home</a></li>
+            <li><a href="/profile">Profile</a></li>
+            <li><a href="/about">about</a></li>
+        </ul>
+    </nav>
+    {% block body %}
+    {% endblock body %}
+</body>
+</html>
