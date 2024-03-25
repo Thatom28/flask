@@ -42,20 +42,6 @@ def profile():
     return render_template("profile.html", name=name, hobbies=hobbies)
 
 
-@app.route("/movie_list")
-def movie_list():
-    return render_template("movie_list.html", movies=movies)
-
-
-@app.route("/movie_list/<id>")
-def detail(id):
-    movie = next((movie for movie in movies if movie["id"] == id), None)
-    if movie:
-        return render_template("movie_detail.html", id=id, movie=movie)
-    else:
-        return "<h1>movie not found</h1>"
-
-
 # local data
 movies = [
     {
@@ -302,6 +288,79 @@ def update_movie(id):
 
 
 # data = [movie[key] = value for key,value in updates.items()]
+# ---------------------------------------------------------------------------
+#                                DAY 22
+
+
+@app.route("/movie_list")
+def movie_list():
+    return render_template("movie_list.html", movies=movies)
+
+
+@app.route("/movie_list/<id>")
+def detail(id):
+    movie = next((movie for movie in movies if movie["id"] == id), None)
+    if movie:
+        return render_template("movie_detail.html", id=id, movie=movie)
+    else:
+        return "<h1>movie not found</h1>"
+
+
+# forms template
+@app.route("/forms")
+def forms():
+    return render_template("forms.html", users=users)
+
+
+@app.route("/login", methods=["GET"])
+def login_page():
+    return render_template("forms.html")
+
+
+# when the bustton is clicked
+# @app.route("/dashboard", methods=["POST"])
+# def dashboard_page():
+#     # to get th eusername form the form
+#     username = request.form.get("username")
+#     password = request.form.get("password")
+#     print("dashboard page", username, password)
+#     # instead of a page it will display a header
+#     return "<h1>Hi {{username}} </h1>"
+
+
+# welcome message
+@app.route("/dashboard", methods=["POST"])
+def welcome_page():
+    username = request.form.get("username")
+    password = request.form.get("password")
+    return render_template("welcome_page.html", username=username, password=password)
+
+
+@app.route("/add")
+def add_movie():
+    return render_template("add_movie.html")
+
+
+# Task - /movies/add -> Add movie form (5 fields) -> Submit -> /movies-list
+@app.route("/movie_added", methods=["POST"])
+def movie_added():
+    movie_name = request.form.get("movie_name")
+    movie_poster = request.form.get("movie_poster")
+    movie_rating = request.form.get("movie_rating")
+    movie_summary = request.form.get("movie_summary")
+    movie_trailer = request.form.get("movie_trailer")
+    new_movie = {
+        "name": movie_name,
+        "poster": movie_poster,
+        "summary": movie_summary,
+        "rating": movie_rating,
+        "trailer": movie_trailer,
+    }
+    movies.append(new_movie)
+    return render_template("movie_list.html", movies=movies)
+
+
+# deleting a movie
 if __name__ == "__main__":
     app.run(debug=True)
 

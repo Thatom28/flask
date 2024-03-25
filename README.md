@@ -43,7 +43,17 @@ make sure your myenv is activated
 flask run ---debug
 ```
 
+## Take snapshot of packages installed and what their dependencies are
+## The package that your app depends on
+```sh
+    pip freeze > requirements.txt
+ ```
 
+ ## install all dependencies and dependencies
+ ```sh
+  pip install -r requirements.txt
+```
+> is useful for documentation purposes
 
 # Why Flask?
 1. improves your DX
