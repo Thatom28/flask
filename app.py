@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 from dotenv import load_dotenv
 from pprint import pprint
+import uuid
 
 load_dotenv()  # load -> os env (enviroment variables)
 print(os.environ.get("AZURE_DATABASE_URL"))
@@ -33,13 +34,15 @@ except Exception as e:
 class Movie(db.Model):
     # the table name to point to
     __tablename__ = "movies"
-    # add its columns
-    id = db.Column(db.String(50), primary_key=True)
+    # add its columns                  #it will create random string for id| no need to add
+    id = db.Column(db.String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
     name = db.Column(db.String(100))
     poster = db.Column(db.String(255))
     rating = db.Column(db.Float)
     summary = db.Column(db.String(500))
     trailer = db.Column(db.String(255))
+
+    # how the data should loook like in JSON (the keys)
 
     def to_dict(self):
         # the name the front end wants the key to be
@@ -53,13 +56,13 @@ class Movie(db.Model):
         }
 
 
-# @app.get("/movies")
-# def get_movie():
-#     movie_list = Movie.query.all()
-#     data = [
-#         movie.to_dict() for movie in movie_list
-#     ]  # converting a list of dictionaries
-#     return jsonify(data)
+@app.get("/movies")
+def get_movie():
+    movie_list = Movie.query.all()
+    data = [
+        movie.to_dict() for movie in movie_list
+    ]  # converting a list of dictionaries
+    return jsonify(data)
 
 
 # ----------------------------------------------------------------------------------
@@ -90,22 +93,100 @@ def movie_id_page(id):
     movie = Movie.query.get(id)
     if movie:
         data = [movie.to_dict()]  # converting a list of dictionaries
-        return render_template("movie_detail.html", movie=data)
+        return render_template("movie_list.html", movies=data)
     else:
         "<h1>Movie not found</h1>"
 
 
-# @app.delete("/movies/<id>")  # <> converts to a variable
-# def delete_movie(id):
-#     movie = Movie.query.delete(id)
-#     if movie:
-#         message = "Movie deleted sucessfully"
-#         return jsonify(movie)
-#     else:
-#         result = {"message": "movies not found"}
-#         return jsonify(result), 404
+# --------------------------------------------------------------------------------------------------------------------------------
+# task 4
+@app.delete("/movies/<id>")  # <> converts to a variable
+def delete_movie(id):
+    movie = Movie.query.get(id)
+    try:
+        data = movie.to_dict()
+        db.session.delete(movie)
+        # commit for (create|delete|update)
+        db.session.commit()  # deleted permanently, cannot rollback
+        return jsonify({"message": "movie not found", "data": data})
+    except Exception as e:
+        db.session.rollback()  # undo the change
+        return jsonify({"message": "movie not found"})
 
-# how the data should loook like in JSON (the keys)
+
+# Task 4 | db.session.delete(movie)
+# @app.delete("/movies/<id>")
+# def delete_movie(id):
+#     # Permission to modify the lexical scope variable
+#     filtered_movie = Movie.query.get(id)
+#     if not filtered_movie:
+#         return jsonify({"message": "Movie not found"}), 404
+
+#     try:
+#         data = filtered_movie.to_dict()
+#         db.session.delete(filtered_movie)
+#         db.session.commit()  # Making the change (update/delete/create) permanent
+#         return jsonify({"message": "Deleted Successfully", "data": data})
+#     except Exception as e:
+#         db.session.rollback()  # Undo the change
+#         return jsonify({"message": str(e)}), 500
+
+# --------------------------------------------------------------------------------------------------------------------
+# Task 5: delete on the wweb page
+# @app.route("/movies/delete/<id>")  # <> converts to a variable
+# def delete_movie(id):
+#     movie = Movie.query.get(id)
+#     try:
+#         data = movie.to_dict()
+#         db.session.delete(movie)
+#         # commit for (create|delete|update)
+#         db.session.commit()  # deleted permanently, cannot rollback
+#         return render_template("movie_list")
+#     except Exception as e:
+#         db.session.rollback()  # undo the change
+#         return jsonify({"message": "movie not found"})
+
+
+# -------------------------------------------------------------------------------------------------------------------
+# Adding to the database
+# randomly generate pk
+@app.post("/movies")
+def create_movie():
+    data = request.json
+    new_movie = Movie(
+        name=data["name"],
+        poster=data["poster"],
+        rating=data["rating"],
+        summary=data["summary"],
+        trailer=data["trailer"],
+    )
+    # if the names are the same as the ones given in the other side
+    # new_movie = Movie(**data)
+    try:
+        db.session.add(new_movie)
+        db.session.commit()
+        result = {"message": "movies added succsefully", "data": new_movie.to_dict()}
+        return jsonify(result), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": "movie not added"})
+
+
+# --------------------------------------------------------------------------------------------
+@app.put("/movies/<id>")
+def update_movie_by_id(id):
+    movie = Movie.query.get(id)
+    if movie:
+        data = request.json
+        movie.name = data.get("name", movie.name)
+        movie.poster = data.get("poster", movie.poster)
+        movie.rating = data.get("rating", movie.rating)
+        movie.summary = data.get("summary", movie.summary)
+        movie.trailer = data.get("trailer", movie.trailer)
+        db.session.commit()
+        return jsonify({"message": "Updated Successfully", "data": movie.to_dict()})
+    else:
+        return jsonify({"message": "Movie not found"}), 404
 
 
 # the home page what should we return
@@ -369,18 +450,18 @@ def profile():
 
 # --------------------------------------------------------------------------------------------------
 # updating the movie
-@app.put("/movies/<id>")  # <> converts to a variable
-def update_movie(id):
-    updates = request.json  # get the data from json
-    movie = next(
-        (movie for movie in movies if movie["id"] == id), None
-    )  # find the movie id
-    if movie:
-        movie.update(updates)
-        return jsonify({"data": movie, "message": "Movie updated sucessfully"})
-    else:
-        result = {"message": "movies not found"}
-        return jsonify(result), 404
+# @app.put("/movies/<id>")  # <> converts to a variable
+# def update_movie(id):
+#     updates = request.json  # get the data from json
+#     movie = next(
+#         (movie for movie in movies if movie["id"] == id), None
+#     )  # find the movie id
+#     if movie:
+#         movie.update(updates)
+#         return jsonify({"data": movie, "message": "Movie updated sucessfully"})
+#     else:
+#         result = {"message": "movies not found"}
+#         return jsonify(result), 404
 
 
 # ---------------------------------------------------------------------------------------
