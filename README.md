@@ -55,6 +55,12 @@ flask run ---debug
 ```
 > is useful for documentation purposes
 
+pip install pyodbc
+
+pip install SQLAlchemy
+
+pip install flask_sqlalchemy
+
 # Why Flask?
 1. improves your DX
 2. micro framework
