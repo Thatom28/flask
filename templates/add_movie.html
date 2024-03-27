@@ -14,7 +14,7 @@
 </head>
 <body>
     <!-- Form only supports GET and POST -->
-    <form  action="{{url_for('add_movie_to_list')}}" method = "POST">
+    <form  action="{{url_for('movies_list_bp.add_movie')}}" method = "POST">
         <div class="login-form">
             <input name="movie_name" type="text" placeholder="movie_name" />
             <input name="movie_poster" type="text" placeholder="movie_poster" />

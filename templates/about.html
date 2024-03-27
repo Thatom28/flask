@@ -7,7 +7,7 @@
       <img class="user-pic" src="{{user.pic}}" alt="Profile picture" />
       <p class="user-msg">
         <!-- ternary operator -->
-            Hello, <span class="user-name">{{"🚀" if user.pro else "🎊"}}</span>
+            Hello, {{user.name}}<span class="user-name">{{"🚀" if user.pro else "🎊"}}</span>
       </p>
     </div>
     {% endfor %}
