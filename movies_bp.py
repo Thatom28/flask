@@ -2,39 +2,14 @@ from flask import Blueprint, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 import uuid
+from app import Movie, db
 
 # from app import app
 
 movies_bp = Blueprint("movies_bp", __name__)
 
-db = SQLAlchemy()
 
-
-# model (SQLAlchemy)  == schema
-# inheriting from db.model
-class Movie(db.Model):
-    # the table name to point to
-    __tablename__ = "movies"
-    # add its columns                  #it will create random string for id| no need to add
-    id = db.Column(db.String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
-    name = db.Column(db.String(100))
-    poster = db.Column(db.String(255))
-    rating = db.Column(db.Float)
-    summary = db.Column(db.String(500))
-    trailer = db.Column(db.String(255))
-
-    # how the data should loook like in JSON (the keys)
-
-    def to_dict(self):
-        # the name the front end wants the key to be
-        return {
-            "id": self.id,
-            "name": self.name,
-            "poster": self.poster,
-            "rating": self.rating,
-            "summary": self.summary,
-            "trailer": self.trailer,
-        }
+# db = SQLAlchemy()
 
 
 @movies_bp.get("/")

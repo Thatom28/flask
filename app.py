@@ -4,10 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 from dotenv import load_dotenv
 from pprint import pprint
-from movies_bp import movies_bp, Movie, db
 from about_bp import about_bp
-from movie_list_bp import movie_list_bp
-from user_bp import user_bp
+import uuid
 
 load_dotenv()  # load -> os env (enviroment variables)
 print(os.environ.get("AZURE_DATABASE_URL"))
@@ -21,16 +19,62 @@ app = Flask(__name__)
 # connection_string = "mssql+pyodbc://thatomatlala:password1!@thato.database.windows.net:1433/moviesdb?driver=ODBC+Driver+17+for+SQL+Server&Encrypt=yes&TrustServerCertificate=no&Connection Timeout=30"
 connection_string = os.environ.get("AZURE_DATABASE_URL")
 app.config["SQLALCHEMY_DATABASE_URI"] = connection_string
+db = SQLAlchemy()
 
-db.init_app(app)
 
-try:
-    with app.app_context():
-        # Use text() to explicitly declare your SQL command
-        result = db.session.execute(text("SELECT 1")).fetchall()
-        print("Connection successful:", result)
-except Exception as e:
-    print("Error connecting to the database:", e)
+# model (SQLAlchemy)  == schema
+# inheriting from db.model
+class Movie(db.Model):
+    # the table name to point to
+    __tablename__ = "movies"
+    # add its columns                  #it will create random string for id| no need to add
+    id = db.Column(db.String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
+    name = db.Column(db.String(100))
+    poster = db.Column(db.String(255))
+    rating = db.Column(db.Float)
+    summary = db.Column(db.String(500))
+    trailer = db.Column(db.String(255))
+
+    # how the data should loook like in JSON (the keys)
+
+    def to_dict(self):
+        # the name the front end wants the key to be
+        return {
+            "id": self.id,
+            "name": self.name,
+            "poster": self.poster,
+            "rating": self.rating,
+            "summary": self.summary,
+            "trailer": self.trailer,
+        }
+
+
+class User(db.Model):
+    # the table name to point to
+    __tablename__ = "users"
+    # add its columns                  #it will create random string for id| no need to add
+    id = db.Column(db.String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
+    username = db.Column(db.String(50))
+    password = db.Column(db.String(50))
+
+    # how the data should loook like in JSON (the keys)
+    def to_dict(self):
+        # the name the front end wants the key to be
+        return {
+            "id": self.id,
+            "username": self.username,
+            "password": self.password,
+        }
+
+    db.init_app(app)
+
+    try:
+        with app.app_context():
+            # Use text() to explicitly declare your SQL command
+            result = db.session.execute(text("SELECT 1")).fetchall()
+            print("Connection successful:", result)
+    except Exception as e:
+        print("Error connecting to the database:", e)
 
 
 # Task 4 | db.session.delete(movie)
@@ -99,46 +143,6 @@ def profile():
     return render_template("profile.html", name=name, hobbies=hobbies)
 
 
-# ---------------------------------------------------------------------------
-#                                DAY 22
-
-# @app.route("/movie_list")
-# def movie_list():
-#     return render_template("movie_list.html", movies=movies)
-
-
-# @app.route("/movie_list/<id>")
-# def detail(id):
-#     movie = next((movie for movie in movies if movie["id"] == id), None)
-#     if movie:
-#         return render_template("movie_detail.html", id=id, movie=movie)
-#     else:
-#         return "<h1>movie not found</h1>"
-
-
-# forms template
-@app.route("/forms")
-def forms():
-    return render_template("forms.html", users=users)
-
-
-@app.route("/login", methods=["GET"])
-def login_page():
-    return render_template("forms.html")
-
-
-# ----------------------------------------------------------------------------
-# when the bustton is clicked
-# @app.route("/dashboard", methods=["POST"])
-# def dashboard_page():
-#     # to get th eusername form the form
-#     username = request.form.get("username")
-#     password = request.form.get("password")
-#     print("dashboard page", username, password)
-#     # instead of a page it will display a header
-#     return "<h1>Hi {{username}} </h1>"
-
-
 # welcome message
 @app.route("/dashboard", methods=["POST"])
 def welcome_page():
@@ -155,69 +159,56 @@ def add_movie():
     return render_template("add_movie.html")
 
 
-# Task - /movies/add -> Add movie form (5 fields) -> Submit -> /movies-list
-# @app.route("/movie/add", methods=["POST"])
-# def movie_added():
-#     movie_name = request.form.get("movie_name")
-#     movie_poster = request.form.get("movie_poster")
-#     movie_rating = request.form.get("movie_rating")
-#     movie_summary = request.form.get("movie_summary")
-#     movie_trailer = request.form.get("movie_trailer")
-#     new_movie = {
-#         "name": movie_name,
-#         "poster": movie_poster,
-#         "summary": movie_summary,
-#         "rating": movie_rating,
-#         "trailer": movie_trailer,
-#     }
-#     ids = [int(movie["id"]) for movie in movies]
-#     largest_id = max(ids)
-#     new_movie["id"] = str(largest_id + 1)
-#     movies.append(new_movie)
-#     return render_template("movie_list.html", movies=movies)
-
-
-# --------------------------------------------------------------------------
-
-
 # ----------------------------------------------------------------------------
 
 
-@app.route("/movie/update/<id>")
-def edit_movie_by_id(id):
-    movie = Movie.query.get(id)
-    if movie:
-        movie_name = request.form.get("movie_name", movie.name)
-        movie_poster = request.form.get("movie_poster", movie.poster)
-        movie_rating = request.form.get("movie_rating", movie.rating)
-        movie_summary = request.form.get("movie_summary", movie.summary)
-        movie_trailer = request.form.get("movie_trailer", movie.trailer)
-    movie = Movie(
-        name=movie_name,
-        poster=movie_poster,
-        rating=movie_rating,
-        summary=movie_summary,
-        trailer=movie_trailer,
-    )
-    try:
-        db.session.commit()
-        return jsonify({"message": "Updated Successfully", "data": movie.to_dict()})
-    except Exception as e:
-        return jsonify({"message": "Movie not found"}), 404
+# @app.route("/movie/update/<id>")
+# def edit_movie_by_id(id):
+#     movie = Movie.query.get(id)
+#     if movie:
+#         movie_name = request.form.get("movie_name", movie.name)
+#         movie_poster = request.form.get("movie_poster", movie.poster)
+#         movie_rating = request.form.get("movie_rating", movie.rating)
+#         movie_summary = request.form.get("movie_summary", movie.summary)
+#         movie_trailer = request.form.get("movie_trailer", movie.trailer)
+#     movie = Movie(
+#         name=movie_name,
+#         poster=movie_poster,
+#         rating=movie_rating,
+#         summary=movie_summary,
+#         trailer=movie_trailer,
+#     )
+#     try:
+#         db.session.commit()
+#         return jsonify({"message": "Updated Successfully", "data": movie.to_dict()})
+#     except Exception as e:
+#         return jsonify({"message": "Movie not found"}), 404
 
 
 # -----------------------------------------------------------------------------
 
 
 app.register_blueprint(about_bp, url_prefix="/about")
+
+
 # ------------------------------------------------------------------------------------------------
 
+from movies_bp import movies_bp
 
 app.register_blueprint(movies_bp, url_prefix="/movies")
+
+
 # --------------------------------------------------------------------------
-app.register_blueprint(movie_list_bp, url_prefix="/movies_list")
+from movie_list_bp import movie_list_bp
+
+app.register_blueprint(movie_list_bp, url_prefix="/movie_list")
+
+
+# --------------------------------------------------------------------------
+from user_bp import user_bp
 
 app.register_blueprint(user_bp, url_prefix="/user")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
