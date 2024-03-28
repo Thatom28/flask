@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Register:</h1>
+    <!-- tou do not need to specify the action meand you are refering
+    to the same url but the post of it-->
+    <form action="" method="post">
+        <!-- hidden field with token -->
+        {{form.hidden_tag()}}
+        {{form.username.label}}: {{form.username(placeholder="username")}}
+        </br>
+        {{form.password.label}}
+        {{form.password(placeholder="password")}}
+        </br>
+        {{form.submit()}}
+    </form>
+</body>
+</html>
