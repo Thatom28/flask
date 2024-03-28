@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Movie</title>
+</head>
+<body>
+    <h1>Update Movie</h1>
+    <form action="{{url_for('movie_list_bp.updated_movie_by_id', id = movie.id)}}" method="POST">
+        <label for="name">Name:</label>
+        <input type="text" name="name" value="{{ movie.name }}"><br>
+        
+        <label for="poster">Poster:</label>
+        <input type="text" name="poster" value="{{ movie.poster }}"><br>
+        
+        <label for="rating">Rating:</label>
+        <input type="text" name="rating" value="{{ movie.rating }}"><br>
+        
+        <label for="summary">Summary:</label>
+        <textarea name="summary">{{ movie.summary }}</textarea><br>
+        
+        <label for="trailer">Trailer:</label>
+        <input type="text" name="trailer" value="{{ movie.trailer }}"><br>
+        
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>

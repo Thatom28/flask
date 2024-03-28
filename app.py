@@ -58,7 +58,7 @@ class User(db.Model):
     password = db.Column(db.String(50))
 
     # how the data should loook like in JSON (the keys)
-    def to_dict(self):
+    def user_to_dict(self):
         # the name the front end wants the key to be
         return {
             "id": self.id,
@@ -111,20 +111,6 @@ class User(db.Model):
 
 
 # --------------------------------------------------------------------------------------------
-# @app.put("/movies/update/<id>")
-# def update_movie_by_id(id):
-#     movie = Movie.query.get(id)
-#     if movie:
-#         data = request.json
-#         movie.name = data.get("name", movie.name)
-#         movie.poster = data.get("poster", movie.poster)
-#         movie.rating = data.get("rating", movie.rating)
-#         movie.summary = data.get("summary", movie.summary)
-#         movie.trailer = data.get("trailer", movie.trailer)
-#         db.session.commit()
-#         return jsonify({"message": "Updated Successfully", "data": movie.to_dict()})
-#     else:
-#         return jsonify({"message": "Movie not found"}), 404
 
 
 # the home page what should we return

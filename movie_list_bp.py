@@ -4,8 +4,6 @@ from movies_bp import Movie, db
 
 movie_list_bp = Blueprint("movie_list_bp", __name__)
 
-db = SQLAlchemy()
-
 
 # Task 2: /movies-list -> Display the data on the page from Azure (MSSQL)
 # Movie list dashboard
@@ -71,3 +69,30 @@ def create_movie():
     except Exception as e:
         db.session.rollback()  # Undo the change
         return f"<h1>Error happened {str(e)}</h1>", 500
+
+
+@movie_list_bp.route("/update/<id>", methods=["GET"])
+def update_movie(id):
+    movie = Movie.query.get(id)
+    if movie:
+        return render_template("edit_movie.html", movie=movie)
+    else:
+        return "<h1>Movie not found</h1>", 404
+
+
+@movie_list_bp.route("/updated/<id>", methods=["POST"])
+def updated_movie_by_id(id):
+    movie = Movie.query.get(id)
+    if movie:
+        movie.name = request.form.get("name", movie.name)
+        movie.poster = request.form.get("poster", movie.poster)
+        movie.rating = request.form.get("rating", movie.rating)
+        movie.summary = request.form.get("summary", movie.summary)
+        movie.trailer = request.form.get("trailer", movie.trailer)
+        try:
+            db.session.commit()
+            return f"<h1>Movie updated</h1>", 500
+        except Exception as e:
+            return f"<h1>Error happened {str(e)}</h1>", 500
+    else:
+        return f"<h1>Movie not found</h1>", 500
