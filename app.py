@@ -216,35 +216,29 @@ def register_page():
 
 
 class LoginForm(FlaskForm):
-    username = StringField("Username")
-    password = PasswordField("Password")
+    username = StringField("Username", validators=[InputRequired()])
+    password = PasswordField("Password", validators=[InputRequired()])
     submit = SubmitField("Log in")
 
     def validate_username(self, field):
         existing_username = User.query.filter_by(username=field.data).first()
         if not existing_username:
-            raise ValidationError("user does not exist")
+            raise ValidationError("User name  or password is incorrect")
+
+    def validate_password(self, field):
+        existing_password = User.query.filter_by(password=field.data).first()
+        if not existing_password:
+            raise ValidationError("User name  or password is incorrect")
 
 
 @app.route("/login", methods=["POST", "GET"])
 def login_page():
     form = LoginForm()
-    users = User.query.all()
     # if post(when submit is clicked)
     if form.validate_on_submit():
-        # get the user from the form
-        username = form.username.data
-        password = form.password.data
-        existing_user = User.query.filter_by(
-            username=username, password=password
-        ).first()
-        if existing_user:
-            return render_template("welcome_page.html", username=username)
-        else:
-            return render_template("register.html", form=form)
-
-    # if GET
-    return render_template("login.html", form=form)
+        return render_template("welcome_page.html", username=form.username.data)
+    else:
+        return render_template("login.html", form=form)
 
 
 if __name__ == "__main__":
