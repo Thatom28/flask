@@ -6,20 +6,17 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Log In</h1>
-    <form action="{{url_for('user_bp.login')}}" method="post">
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" placeholder="username" name="username" required>
-        </div>
-        <div>
-            <label for="password">Password:</label>
-            <input type="password" placeholder="password" name="password" required>
-        </div>
-        <div>
-            <label>Login</label>
-            <button type="submit">Login</button>
-        </div>
-    </form>
+    <h1>Log in:</h1>
+    <!-- you do not need to specify the action meand you are refering
+    to the same url but the post of it-->
+    <form action="" method="post">
+        <!-- hidden field with token -->
+        {{form.hidden_tag()}}
+        {{form.username.label}}: {{form.username(placeholder="username")}}
+        </br>
+        {{form.password.label}}
+        {{form.password(placeholder="password")}}
+        </br>
+        {{form.submit()}}
 </body>
 </html>

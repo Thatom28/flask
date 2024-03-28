@@ -1,6 +1,7 @@
 import os
 from flask import Flask, jsonify, request, render_template, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import select
 from sqlalchemy.sql import text
 from dotenv import load_dotenv
 from pprint import pprint
@@ -78,7 +79,7 @@ class User(db.Model):
     __tablename__ = "users"
     # add its columns                  #it will create random string for id| no need to add
     id = db.Column(db.String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
-    username = db.Column(db.String(50))
+    username = db.Column(db.String(50), nullable=False, unique=True)
     password = db.Column(db.String(50))
 
     # how the data should loook like in JSON (the keys)
@@ -100,8 +101,12 @@ try:
         print("Connection successful:", result)
 except Exception as e:
     print("Error connecting to the database:", e)
+# -------------------------------------------------------------------------------------------
+# create a table if its not in the database
+# db.create_all()
 
 
+# --------------------------------------------------------------------------------------------
 # the home page what should we return
 # this is a page
 @app.route("/")
@@ -154,16 +159,18 @@ app.register_blueprint(movie_list_bp, url_prefix="/movie_list")
 
 
 # --------------------------------------------------------------------------
-from user_bp import user_bp
+# from user_bp import user_bp
 
-app.register_blueprint(user_bp, url_prefix="/user")
+# app.register_blueprint(user_bp, url_prefix="/user")
 
 # -------------------------------------------------------------------------------
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length
+from wtforms.validators import InputRequired, Length, ValidationError
 
 
+# --------------------------------------------------------------------------------------------------------------------------------
+# Register
 class RegistrationForm(FlaskForm):
     # the fields (How they look on the template, the validators to the form)
     username = StringField("Username", validators=[InputRequired(), Length(min=6)])
@@ -173,15 +180,26 @@ class RegistrationForm(FlaskForm):
 
     submit = SubmitField("sign up")
 
+    # to display something to the user if error occurs
+    # Called automatically when the submit happens
+    # field gets the data the user is submitting
+    def validate_username(self, field):
+        print("validate was called🤩🤩🤩🤩", field.data)
+        # check if they exist by the column name and teh data given on te for
+        existing_username = User.query.filter_by(username=field.data).first()
+        if existing_username:
+            raise ValidationError("User name already exists")
+
 
 @app.route("/register", methods=["POST", "GET"])
 def register_page():
     form = RegistrationForm()
-    # (on "POST" if the submit button is clicked)
+    # if post(when submit is clicked)
     if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        new_user = User(username=username, password=password)
+        # get the user from the form
+        # username = form.username.data
+        # password = form.password.data
+        new_user = User(username=form.username.data, password=form.password.data)
         try:
             db.session.add(new_user)
             db.session.commit()
@@ -189,8 +207,44 @@ def register_page():
         except Exception as e:
             db.session.rollback()
             return f"<h1>Error happend {str(e)}</h1>", 500
-    # for GET
+    # if GET
     return render_template("register.html", form=form)
+
+
+# ---------------------------------------------------------------------------------------
+# Login
+
+
+class LoginForm(FlaskForm):
+    username = StringField("Username")
+    password = PasswordField("Password")
+    submit = SubmitField("Log in")
+
+    def validate_username(self, field):
+        existing_username = User.query.filter_by(username=field.data).first()
+        if not existing_username:
+            raise ValidationError("user does not exist")
+
+
+@app.route("/login", methods=["POST", "GET"])
+def login_page():
+    form = LoginForm()
+    users = User.query.all()
+    # if post(when submit is clicked)
+    if form.validate_on_submit():
+        # get the user from the form
+        username = form.username.data
+        password = form.password.data
+        existing_user = User.query.filter_by(
+            username=username, password=password
+        ).first()
+        if existing_user:
+            return render_template("welcome_page.html", username=username)
+        else:
+            return render_template("register.html", form=form)
+
+    # if GET
+    return render_template("login.html", form=form)
 
 
 if __name__ == "__main__":
