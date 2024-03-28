@@ -157,12 +157,6 @@ from movie_list_bp import movie_list_bp
 
 app.register_blueprint(movie_list_bp, url_prefix="/movie_list")
 
-
-# --------------------------------------------------------------------------
-# from user_bp import user_bp
-
-# app.register_blueprint(user_bp, url_prefix="/user")
-
 # -------------------------------------------------------------------------------
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -191,26 +185,6 @@ class RegistrationForm(FlaskForm):
             raise ValidationError("User name already exists")
 
 
-@app.route("/register", methods=["POST", "GET"])
-def register_page():
-    form = RegistrationForm()
-    # if post(when submit is clicked)
-    if form.validate_on_submit():
-        # get the user from the form
-        # username = form.username.data
-        # password = form.password.data
-        new_user = User(username=form.username.data, password=form.password.data)
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-            return "<h1>Registration successful"
-        except Exception as e:
-            db.session.rollback()
-            return f"<h1>Error happend {str(e)}</h1>", 500
-    # if GET
-    return render_template("register.html", form=form)
-
-
 # ---------------------------------------------------------------------------------------
 # Login
 
@@ -231,14 +205,10 @@ class LoginForm(FlaskForm):
             raise ValidationError("User name  or password is incorrect")
 
 
-@app.route("/login", methods=["POST", "GET"])
-def login_page():
-    form = LoginForm()
-    # if post(when submit is clicked)
-    if form.validate_on_submit():
-        return render_template("welcome_page.html", username=form.username.data)
-    else:
-        return render_template("login.html", form=form)
+# --------------------------------------------------------------------------
+from user_bp import user_bp
+
+app.register_blueprint(user_bp)
 
 
 if __name__ == "__main__":
