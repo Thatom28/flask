@@ -197,12 +197,13 @@ class LoginForm(FlaskForm):
     def validate_username(self, field):
         existing_username = User.query.filter_by(username=field.data).first()
         if not existing_username:
-            raise ValidationError("User name  or password is incorrect")
+            raise ValidationError("Username is incorrect")
 
     def validate_password(self, field):
-        existing_password = User.query.filter_by(password=field.data).first()
-        if not existing_password:
-            raise ValidationError("User name  or password is incorrect")
+        user = User.query.filter_by(username=self.username.data).first()
+        if user:
+            if user.password != field.data:
+                raise ValidationError("Incorrect password")
 
 
 # --------------------------------------------------------------------------

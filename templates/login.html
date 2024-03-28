@@ -22,7 +22,19 @@
         {% endfor %}
          {% endif %}
 
+        {% if form.password.errors %}
+        {% for error in form.password.errors  %}
+            <div style="color:red">
+                {{error}}
+            </div>
+
+        {% endfor %}
+         {% endif %}
+
         {{form.username.label}}: {{form.username(placeholder="username")}}
+
+        <!-- how to add classes -->
+        <!-- {{form.username.label, class=""}}: {{form.username(placeholder="username", class="")}} -->
         </br>
         {{form.password.label}}
         {{form.password(placeholder="password")}}
