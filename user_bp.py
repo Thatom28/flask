@@ -14,14 +14,14 @@ def login():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        try:
-            user = [
-                user
-                for user in users
-                if user.username == username and user.password == password
-            ]
+        user = [
+            user
+            for user in users
+            if user.username == username and user.password == password
+        ]
+        if user:
             return render_template("welcome_page.html", user=user)
-        except Exception as e:
+        else:
             return render_template("login.html", error="Invalid username or password")
             # return f"<h1>Error happend {str(e)}</h1>", 500
     else:
@@ -35,22 +35,21 @@ def login():
 
 # create user when they sign up
 @user_bp.route("/signup", methods=["POST", "GET"])
-def create_user():
-    users = User.query.all()
+def signup():
     if request.method == "POST":
-        user = {
-            "username": request.form.get("username"),
-            "password": request.form.get("password"),
-        }
-        existing_user = any(user.username == users.username for user in users)
+        username = request.form.get("username")
+        password = request.form.get("password")
+        # matches the rows where the username matches the provided username, and return the
+        # first result from the filtered query
+        existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             return render_template("login.html")
         else:
-            new_user = User(**data)
+            new_user = User(username=username, password=password)
             try:
                 db.session.add(new_user)
                 db.session.commit()
-                return f"<h1>{data['username']} user successfully</h1>"
+                return f"<h1>user added successfully</h1>"
             except Exception as e:
                 db.session.rollback()
                 return f"<h1>Error happend {str(e)}</h1>", 500
