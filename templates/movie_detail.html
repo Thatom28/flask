@@ -1,41 +1,7 @@
 {% extends 'base.html' %}
+{% block title %}Movie details{% endblock %}
+{% block title %}Movie list{% endblock %}
 {% block body %}
-  <style>
-    body {
-      font-family: Roboto, sans-serif;
-    }
- 
-    .movie-detail-container {
-      /* background: orange; */
-      max-width: 600px;
-    }
- 
-    .movie-spec {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
- 
-    .movie-poster {
-      height: 500px;
-      width: 100%;
-      object-fit: cover;
-      border-radius: 24px;
-      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    }
- 
-    .movie-name {
-      margin: 0px;
-    }
- 
-    .movie-list-container {
-      display: flex;
-      gap: 24px;
-      justify-content: space-around;
-      flex-wrap: wrap;
-    }
-  </style>
-  <body>
     <iframe
       width="100%"
       height="720"
