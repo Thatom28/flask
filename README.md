@@ -55,18 +55,29 @@ flask run ---debug
 ```
 > is useful for documentation purposes
 
+the drive that is used to connect with the database that translates between raw and sqlachemy
+```
 pip install pyodbc
+```
 
+# connection to database
+```
 pip install SQLAlchemy
-
 pip install flask_sqlalchemy
+```
 
+env- to hide the url, allows you to inherit
+
+uuid - randow generation od pk
 # Why Flask?
 1. improves your DX
 2. micro framework
 3. Ready made tools to implemented the API (CRUD)
 4. lightweight
 5. gives ready made tools to implement REST API
+6. has templates(can build templates)
+7. blue prints to organise things
+8. 
 
 # Django vs Flask
 - django has full operations already in-buit, no freedom to edit the methods
