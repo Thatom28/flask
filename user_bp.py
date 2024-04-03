@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request
 from app import User, db, RegistrationForm, LoginForm
 
 user_bp = Blueprint("user_bp", __name__)
@@ -35,3 +35,12 @@ def login_page():
         return render_template("welcome_page.html", username=form.username.data)
     else:
         return render_template("login.html", form=form)
+
+
+# ----------------------------------------------------------------------------------------
+# dashoard
+@user_bp.route("/dashboard", methods=["POST"])
+def welcome_page():
+    username = request.form.get("username")
+    password = request.form.get("password")
+    return render_template("welcome_page.html", username=username, password=password)

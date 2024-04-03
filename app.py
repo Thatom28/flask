@@ -54,26 +54,6 @@ class Movie(db.Model):
 
 
 # ----------------------------------------------------------------------------------------------
-# Home work
-
-# class User(db.Model):
-#     # the table name to point to
-#     __tablename__ = "users"
-#     # add its columns                  #it will create random string for id| no need to add
-#     id = db.Column(db.String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
-#     username = db.Column(db.String(50))
-#     password = db.Column(db.String(50))
-
-
-#     # how the data should loook like in JSON (the keys)
-#     def user_to_dict(self):
-#         # the name the front end wants the key to be
-#         return {
-#             "id": self.id,
-#             "username": self.username,
-#             "password": self.password,
-#         }
-# --------------------------------------------------------------------------------------------
 class User(db.Model):
     # the table name to point to
     __tablename__ = "users"
@@ -101,35 +81,6 @@ try:
         print("Connection successful:", result)
 except Exception as e:
     print("Error connecting to the database:", e)
-# -------------------------------------------------------------------------------------------
-# create a table if its not in the database
-# db.create_all()
-
-
-# --------------------------------------------------------------------------------------------
-# the home page what should we return
-# this is a page
-@app.route("/")
-def hello_world():
-    return "<h1>Hello, Sanlam🌍!</h1>"
-
-
-name = "Thato"
-hobbies = ["gaming", "codong", "gym", "reading"]
-
-
-@app.route("/profile")
-def profile():
-    return render_template("profile.html", name=name, hobbies=hobbies)
-
-
-# welcome message
-@app.route("/dashboard", methods=["POST"])
-def welcome_page():
-    username = request.form.get("username")
-    password = request.form.get("password")
-    return render_template("welcome_page.html", username=username, password=password)
-
 
 # -----------------------------------------------------------------------------
 
@@ -210,7 +161,11 @@ class LoginForm(FlaskForm):
 from user_bp import user_bp
 
 app.register_blueprint(user_bp)
+# --------------------------------------------------------------------------
+# main
+from main_bp import main_bp
 
+app.register_blueprint(main_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)
