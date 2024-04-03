@@ -6,6 +6,9 @@ from sqlalchemy.sql import text
 from dotenv import load_dotenv
 from pprint import pprint
 from extensions import db
+from flask_login import LoginManager
+from models.users import User
+
 
 load_dotenv()  # load -> os env (enviroment variables)
 print(os.environ.get("AZURE_DATABASE_URL"), os.environ.get("FORM_SECRET_KEY"))
@@ -22,6 +25,9 @@ app.config["SQLALCHEMY_DATABASE_URI"] = connection_string
 
 # Token
 app.config["SECRET_KEY"] = os.environ.get("FORM_SECRET_KEY")
+
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
 # ----------------------------------------------------------------------------------------------
@@ -73,6 +79,13 @@ app.register_blueprint(user_bp)
 from routes.main_bp import main_bp
 
 app.register_blueprint(main_bp)
+
+
+# verifys the user with this
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(user_id)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

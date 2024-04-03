@@ -1,9 +1,11 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, flash, redirect, url_for
 from models.users import User
 from extensions import db
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
+from flask_login import login_user, login_required
+from models.users import User
 
 user_bp = Blueprint("user_bp", __name__)
 
@@ -77,7 +79,10 @@ def login_page():
     form = LoginForm()
     # if post(when submit is clicked)
     if form.validate_on_submit():
-        return render_template("welcome_page.html", username=form.username.data)
+        user = User.query.filter_by(username=form.username.data).first()
+        login_user(user)  # token store in the cookie to allow the user access
+        flash("You were successfully logged in")
+        return redirect(url_for("movie_list_bp.movie_list_page"))
     else:
         return render_template("login.html", form=form)
 
@@ -89,3 +94,10 @@ def welcome_page():
     username = request.form.get("username")
     password = request.form.get("password")
     return render_template("welcome_page.html", username=username, password=password)
+
+
+# @user_bp.route("/logout")
+# @login_required
+# def logout():
+#     logout_user()
+#     return redirect(somewhere)

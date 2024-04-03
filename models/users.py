@@ -1,8 +1,9 @@
 from extensions import db
 import uuid
+from flask_login import UserMixin
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     # the table name to point to
     __tablename__ = "users"
     # add its columns                  #it will create random string for id| no need to add

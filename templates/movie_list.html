@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% block title %}Movie list{% endblock %}
 {% block body %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+  <ul class=flashes>
+  {% for message in messages %}
+    <li>{{ message }}</li>
+  {% endfor %}
+  </ul>
+{% endif %}
+{% endwith %}
 <div class="movie-list-container">
     {% for movie in movies %}
     <div class="movie-container">

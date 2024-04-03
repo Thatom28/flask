@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template
+from flask_login import LoginManager, login_required
 
 about_bp = Blueprint("about_bp", __name__)
 
@@ -32,6 +33,7 @@ def about():
 
 # ----------------------------------------------------------------------------
 @about_bp.route("/<id>")
+@login_required
 def about_page_by_id(id):
     user = [user for user in users if user["id"] == id]
     return render_template("about.html", users=user)
