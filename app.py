@@ -5,8 +5,6 @@ from sqlalchemy import select
 from sqlalchemy.sql import text
 from dotenv import load_dotenv
 from pprint import pprint
-from about_bp import about_bp
-import uuid
 from extensions import db
 
 load_dotenv()  # load -> os env (enviroment variables)
@@ -21,7 +19,7 @@ app = Flask(__name__)
 # connection_string = "mssql+pyodbc://thatomatlala:password1!@thato.database.windows.net:1433/moviesdb?driver=ODBC+Driver+17+for+SQL+Server&Encrypt=yes&TrustServerCertificate=no&Connection Timeout=30"
 connection_string = os.environ.get("AZURE_DATABASE_URL")
 app.config["SQLALCHEMY_DATABASE_URI"] = connection_string
-db = SQLAlchemy()
+
 # Token
 app.config["SECRET_KEY"] = os.environ.get("FORM_SECRET_KEY")
 
@@ -49,38 +47,30 @@ def add_movie():
 
 # ----------------------------------------------------------------------------
 
+from routes.about_bp import about_bp
 
 app.register_blueprint(about_bp, url_prefix="/about")
 
 
 # ------------------------------------------------------------------------------------------------
 
-from movies_bp import movies_bp
+from routes.movies_bp import movies_bp
 
 app.register_blueprint(movies_bp, url_prefix="/movies")
 
 
 # --------------------------------------------------------------------------
-from movie_list_bp import movie_list_bp
+from routes.movie_list_bp import movie_list_bp
 
 app.register_blueprint(movie_list_bp, url_prefix="/movie_list")
 
-# -------------------------------------------------------------------------------
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
-
-
-# --------------------------------------------------------------------------------------------------------------------------------
-# Register
-
-# --------------------------------------------------------------------------
-from user_bp import user_bp
+# ----------------------------------------------------------
+from routes.user_bp import user_bp
 
 app.register_blueprint(user_bp)
 # --------------------------------------------------------------------------
 # main
-from main_bp import main_bp
+from routes.main_bp import main_bp
 
 app.register_blueprint(main_bp)
 
