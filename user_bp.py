@@ -1,7 +1,52 @@
 from flask import Blueprint, render_template, request
-from app import User, db, RegistrationForm, LoginForm
+from models.users import User
+from extensions import db
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length, ValidationError
 
 user_bp = Blueprint("user_bp", __name__)
+
+
+class RegistrationForm(FlaskForm):
+    # the fields (How they look on the template, the validators to the form)
+    username = StringField("Username", validators=[InputRequired(), Length(min=6)])
+    password = PasswordField(
+        "Password", validators=[InputRequired(), Length(min=8, max=12)]
+    )
+
+    submit = SubmitField("sign up")
+
+    # to display something to the user if error occurs
+    # Called automatically when the submit happens
+    # field gets the data the user is submitting
+    def validate_username(self, field):
+        print("validate was called🤩🤩🤩🤩", field.data)
+        # check if they exist by the column name and teh data given on te for
+        existing_username = User.query.filter_by(username=field.data).first()
+        if existing_username:
+            raise ValidationError("User name already exists")
+
+
+# ---------------------------------------------------------------------------------------
+# Login
+
+
+class LoginForm(FlaskForm):
+    username = StringField("Username", validators=[InputRequired()])
+    password = PasswordField("Password", validators=[InputRequired()])
+    submit = SubmitField("Log in")
+
+    def validate_username(self, field):
+        existing_username = User.query.filter_by(username=field.data).first()
+        if not existing_username:
+            raise ValidationError("Username is incorrect")
+
+    def validate_password(self, field):
+        user = User.query.filter_by(username=self.username.data).first()
+        if user:
+            if user.password != field.data:
+                raise ValidationError("Incorrect password")
 
 
 @user_bp.route("/register", methods=["POST", "GET"])

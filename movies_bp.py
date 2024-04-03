@@ -2,7 +2,8 @@ from flask import Blueprint, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.sql import text
 import uuid
-from app import Movie, db
+from models.movie import Movie
+from extensions import db
 
 # from app import app
 

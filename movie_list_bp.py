@@ -1,6 +1,8 @@
 from flask import Blueprint, request, render_template
 from flask_sqlalchemy import SQLAlchemy
-from movies_bp import Movie, db
+from models.movie import Movie
+from extensions import db
+
 
 movie_list_bp = Blueprint("movie_list_bp", __name__)
 

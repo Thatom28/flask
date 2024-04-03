@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from pprint import pprint
 from about_bp import about_bp
 import uuid
-
+from extensions import db
 
 load_dotenv()  # load -> os env (enviroment variables)
 print(os.environ.get("AZURE_DATABASE_URL"), os.environ.get("FORM_SECRET_KEY"))
@@ -26,50 +26,7 @@ db = SQLAlchemy()
 app.config["SECRET_KEY"] = os.environ.get("FORM_SECRET_KEY")
 
 
-# model (SQLAlchemy)  == schema
-# inheriting from db.model
-class Movie(db.Model):
-    # the table name to point to
-    __tablename__ = "movies"
-    # add its columns                  #it will create random string for id| no need to add
-    id = db.Column(db.String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
-    name = db.Column(db.String(100))
-    poster = db.Column(db.String(255))
-    rating = db.Column(db.Float)
-    summary = db.Column(db.String(500))
-    trailer = db.Column(db.String(255))
-
-    # how the data should loook like in JSON (the keys)
-
-    def to_dict(self):
-        # the name the front end wants the key to be
-        return {
-            "id": self.id,
-            "name": self.name,
-            "poster": self.poster,
-            "rating": self.rating,
-            "summary": self.summary,
-            "trailer": self.trailer,
-        }
-
-
 # ----------------------------------------------------------------------------------------------
-class User(db.Model):
-    # the table name to point to
-    __tablename__ = "users"
-    # add its columns                  #it will create random string for id| no need to add
-    id = db.Column(db.String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
-    username = db.Column(db.String(50), nullable=False, unique=True)
-    password = db.Column(db.String(50))
-
-    # how the data should loook like in JSON (the keys)
-    def user_to_dict(self):
-        # the name the front end wants the key to be
-        return {
-            "id": self.id,
-            "username": self.username,
-            "password": self.password,
-        }
 
 
 db.init_app(app)
@@ -116,46 +73,6 @@ from wtforms.validators import InputRequired, Length, ValidationError
 
 # --------------------------------------------------------------------------------------------------------------------------------
 # Register
-class RegistrationForm(FlaskForm):
-    # the fields (How they look on the template, the validators to the form)
-    username = StringField("Username", validators=[InputRequired(), Length(min=6)])
-    password = PasswordField(
-        "Password", validators=[InputRequired(), Length(min=8, max=12)]
-    )
-
-    submit = SubmitField("sign up")
-
-    # to display something to the user if error occurs
-    # Called automatically when the submit happens
-    # field gets the data the user is submitting
-    def validate_username(self, field):
-        print("validate was called🤩🤩🤩🤩", field.data)
-        # check if they exist by the column name and teh data given on te for
-        existing_username = User.query.filter_by(username=field.data).first()
-        if existing_username:
-            raise ValidationError("User name already exists")
-
-
-# ---------------------------------------------------------------------------------------
-# Login
-
-
-class LoginForm(FlaskForm):
-    username = StringField("Username", validators=[InputRequired()])
-    password = PasswordField("Password", validators=[InputRequired()])
-    submit = SubmitField("Log in")
-
-    def validate_username(self, field):
-        existing_username = User.query.filter_by(username=field.data).first()
-        if not existing_username:
-            raise ValidationError("Username is incorrect")
-
-    def validate_password(self, field):
-        user = User.query.filter_by(username=self.username.data).first()
-        if user:
-            if user.password != field.data:
-                raise ValidationError("Incorrect password")
-
 
 # --------------------------------------------------------------------------
 from user_bp import user_bp
