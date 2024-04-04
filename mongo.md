@@ -1,11 +1,21 @@
+## to switch to another database and create a db
 ```
-  use db
+  use db (dbname)
+```
+## to view databases
+```
+ show dbs 
+```
+## Create collection
+```
+  db.Movies.InsertMany[]
+```
+## to show documents (rows)
+```
+  show table
 ```
 
-```
- show dbs
-```
-## Inserts myltiple documents in the collection
+## Inserts multiple documents in the collection
 ```
  db.movies.insertMany([])
 ```
@@ -41,6 +51,7 @@ db.collection.find({
 ```
 
 ## 6. All movies with rating of more than 8
+### comaparisoon opeartions
 ```
 db.collection.find({
   "rating": {

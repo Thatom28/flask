@@ -32,3 +32,6 @@ class Movie(db.Model):
             "summary": self.summary,
             "trailer": self.trailer,
         }
+
+
+# db.create_all()

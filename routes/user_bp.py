@@ -6,6 +6,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from flask_login import login_user, login_required
 from models.users import User
+from werkzeug.security import generate_password_hash, check_password_hash
 
 user_bp = Blueprint("user_bp", __name__)
 
@@ -56,10 +57,14 @@ def register_page():
     form = RegistrationForm()
     # if post(when submit is clicked)
     if form.validate_on_submit():
+        print(f"{generate_password_hash(form.password.data)}{form.password.data}")
+        hashed_password = generate_password_hash(form.password.data)
         # get the user from the form
         # username = form.username.data
         # password = form.password.data
-        new_user = User(username=form.username.data, password=form.password.data)
+        new_user = User(
+            username=form.username.data, password=hashed_password
+        )  # pass the hashed password in the db
         try:
             db.session.add(new_user)
             db.session.commit()

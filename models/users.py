@@ -9,7 +9,7 @@ class User(UserMixin, db.Model):
     # add its columns                  #it will create random string for id| no need to add
     id = db.Column(db.String(50), primary_key=True, default=lambda: str(uuid.uuid4()))
     username = db.Column(db.String(50), nullable=False, unique=True)
-    password = db.Column(db.String(50))
+    password = db.Column(db.String(200))
 
     # how the data should loook like in JSON (the keys)
     def user_to_dict(self):

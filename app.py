@@ -10,17 +10,19 @@ from flask_login import LoginManager
 from models.users import User
 
 
+# server = 'localhost'
+# database = 'moviesdb'
+# username = 'MD/E1005292'
+# driver_name = "ODBC Driver 17 for SQL Server"
+# connection_string = f"mssql+pyodbc://{username}:@{server}/{database}?driver={driver_name}"
+
 load_dotenv()  # load -> os env (enviroment variables)
 print(os.environ.get("AZURE_DATABASE_URL"), os.environ.get("FORM_SECRET_KEY"))
 
 app = Flask(__name__)
-
-# Driver={ODBC Driver 18 for SQL Server};Server=tcp:thato.database.windows.net,1433;Database=moviesdb;Uid=thatomatlala;Pwd={your_password_here};Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;
-# mssql+pyodbc://<username>:<password>@<dsn_name>?driver=<driver_name>
-
-# the connection string is changed if the database is changed to another platform
-# connection_string = "mssql+pyodbc://thatomatlala:password1!@thato.database.windows.net:1433/moviesdb?driver=ODBC+Driver+17+for+SQL+Server&Encrypt=yes&TrustServerCertificate=no&Connection Timeout=30"
-connection_string = os.environ.get("AZURE_DATABASE_URL")
+# for azure connection
+# connection_string = os.environ.get("AZURE_DATABASE_URL")
+connection_string = os.environ.get("LOCAL_DATABASE_URL")
 app.config["SQLALCHEMY_DATABASE_URI"] = connection_string
 
 # Token
@@ -35,13 +37,6 @@ login_manager.init_app(app)
 
 db.init_app(app)
 
-try:
-    with app.app_context():
-        # Use text() to explicitly declare your SQL command
-        result = db.session.execute(text("SELECT 1")).fetchall()
-        print("Connection successful:", result)
-except Exception as e:
-    print("Error connecting to the database:", e)
 
 # -----------------------------------------------------------------------------
 
@@ -86,6 +81,17 @@ app.register_blueprint(main_bp)
 def load_user(user_id):
     return User.query.get(user_id)
 
+
+try:
+    with app.app_context():
+        # Use text() to explicitly declare your SQL command
+        result = db.session.execute(text("SELECT 1")).fetchall()
+        print("Connection successful:", result)
+        # db.drop_all()  # delete the tables in the database
+        # db.create_all()  # Sync tables to db
+        print("creation done")
+except Exception as e:
+    print("Error connecting to the database:", e)
 
 if __name__ == "__main__":
     app.run(debug=True)
