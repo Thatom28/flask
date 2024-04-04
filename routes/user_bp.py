@@ -48,7 +48,9 @@ class LoginForm(FlaskForm):
     def validate_password(self, field):
         user = User.query.filter_by(username=self.username.data).first()
         if user:
-            if user.password != field.data:
+            user_data = user.to_dict()
+            form_password = field.data
+            if not check_password_hash(user_data["password"], form_password):
                 raise ValidationError("Incorrect password")
 
 

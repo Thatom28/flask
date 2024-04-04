@@ -12,7 +12,7 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(200))
 
     # how the data should loook like in JSON (the keys)
-    def user_to_dict(self):
+    def to_dict(self):
         # the name the front end wants the key to be
         return {
             "id": self.id,
