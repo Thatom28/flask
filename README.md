@@ -13,6 +13,12 @@ https://flask.palletsprojects.com/en/3.0.x/quickstart/
 ```sh
  git init
 ```
+
+## stashing changes
+```
+git add.
+git stash apply  # applys the changes
+```
 ## Git
 
 ### initalizing the project

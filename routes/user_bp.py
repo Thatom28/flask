@@ -4,7 +4,7 @@ from extensions import db
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
-from flask_login import login_user, login_required
+from flask_login import login_user, login_required, logout_user
 from models.users import User
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -103,8 +103,8 @@ def welcome_page():
     return render_template("welcome_page.html", username=username, password=password)
 
 
-# @user_bp.route("/logout")
-# @login_required
-# def logout():
-#     logout_user()
-#     return redirect(somewhere)
+@user_bp.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for("login_page"))
