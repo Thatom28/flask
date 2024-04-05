@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+      crossorigin="anonymous"
+    />
+   <link rel="stylesheet" href={{url_for('static', filename='styles.css')}} />
+    <style>
+        h1{
+            color: crimson;
+        }
+        body{
+            display: grid;
+            font-size:24px;
+        }
+        .user-container{
+            text-align: center;
+        }
+        .user-pic{
+            border-radius: 50%;
+            height: 170px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+        }
+        .user-name{
+            font-style: italic;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+        <a class="navbar-brand" href="#">Movies App</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNavAltMarkup"
+          aria-controls="navbarNavAltMarkup"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <a class="nav-link active" href="/profile"
+              >Profile <span class="sr-only">(current)</span></a
+            >
+            <a class="nav-link" href="/movie_list">Movies</a>
+            <a class="nav-link" href="/login">Log in</a>
+            <a class="nav-link" href="/register">Sign up</a>
+          </div>
+        </div>
+      </nav>
+   
+    {% block body %}
+    {% endblock body %}
+</body>
+</html>

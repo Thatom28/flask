@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Movie list{% endblock %}
+{% block body %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+  <ul class=flashes>
+  {% for message in messages %}
+    <li>{{ message }}</li>
+  {% endfor %}
+  </ul>
+{% endif %}
+{% endwith %}
+<div class="movie-list-container">
+    {% for movie in movies %}
+    <div class="movie-container">
+      <img class="movie-poster" src="{{movie.poster}}" alt="{{movie.name}}" />
+      <div class="movie-spec">
+        <h2 class="movie-name">{{movie.name}}</h2>
+        <p>⭐ {{movie.rating}}</p>
+      </div>
+      <p>{{movie.summary}}</p>
+      <div class="movie-actions">
+        <a href="/movie_list/{{movie.id}}">View More</a>
+        <form
+          action="{{url_for('movie_list_bp.delete_movie_by_id')}}"
+          method="POST"
+        >
+          <input name="movie_id" type="text" value="{{movie.id}}" hidden />
+          <button type="submit">Delete</button>
+        </form>
+        <a href="/movie_list/update/{{movie.id}}">update</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% endblock body %}

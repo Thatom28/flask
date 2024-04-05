@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Movie details{% endblock %}
+{% block body %}
+    <iframe
+      width="100%"
+      height="720"
+      src="{{movie.trailer}}"
+      title="Godzilla x Kong : The New Empire | New Final Trailer"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+    ></iframe>
+    <div class="movie-list-container">
+      <div class="movie-detail-container">
+        <div class="movie-spec">
+          <h2 class="movie-name">{{movie.name}}</h2>
+          <p>⭐ {{movie.rating}}</p>
+        </div>
+        <p>{{movie.summary}}</p>
+      </div>
+    </div>
+    {% endblock body %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block body %}
+    <style>
+        .login-form{
+            display: grid;
+            gap: 12px;
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Form only supports GET and POST -->
+    <form  action="{{url_for('movie_list_bp.add_movie')}}" method = "POST">
+        <div class="login-form">
+            <input name="movie_name" type="text" placeholder="movie_name" />
+            <input name="movie_poster" type="text" placeholder="movie_poster" />
+            <input name="movie_rating" type="text" placeholder="movie_rating" />
+            <input name="movie-summary" type="text" placeholder="movie-summary" />
+            <input name="movie_trailer" type="text" placeholder="movie_trailer" />
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+
+    {% endblock body %}

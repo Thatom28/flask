@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+</head>
+<body>
+    <h1>User Dashboard</h1>
+    <form action="/add_item" method="post">
+        <input type="text" name="name" placeholder="Item Name" required>
+        <input type="text" name="description" placeholder="Item Description" required>
+        <button type="submit">Add Item</button>
+    </form>
+    <ul>
+        {% for item in items %}
+            <li>
+                <strong>{{ item['name'] }}</strong> - {{ item['description']}} - {{ item['index'] }}
+                <form id="remove-form-{{ item['index'] }}" action="/remove/{{ item['index'] }}" method="post">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="button" onclick="removeItem('{{ item['index'] }}')">Remove</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+    
+    <script>
+        function removeItem(index) {
+            if (confirm("Are you sure you want to remove this item?")) {
+                document.getElementById("remove-form-" + index).submit();
+            }
+        }
+    </script>
+    
+    <!-- <ul>
+        {% for item in items %}
+            <li>
+                <strong>{{ item['item']['name'] }}</strong> - {{ item['item']['description']}} - {{item['index']}}
+                <form action="/remove/{{item['index']}}" method="delete">
+                    <button type="submit">remove</button>
+                </form>
+            </li>
+        {% endfor %}
+    </ul> -->
+</body>
+</html>

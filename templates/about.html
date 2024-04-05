@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}About{% endblock %}
+{% block body %}
+
+    <!-- mustache -->
+    {% for user in users %}
+    <div class="user-container">
+      <img class="user-pic" src="{{user.pic}}" alt="Profile picture" />
+      <p class="user-msg">
+        <!-- ternary operator -->
+            Hello, {{user.name}}<span class="user-name">{{"🚀" if user.pro else "🎊"}}</span>
+      </p>
+    </div>
+    {% endfor %}
+{% endblock body %}
