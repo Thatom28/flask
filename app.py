@@ -15,7 +15,6 @@ from models.users import User
 # username = 'MD/E1005292'
 # driver_name = "ODBC Driver 17 for SQL Server"
 # connection_string = f"mssql+pyodbc://{username}:@{server}/{database}?driver={driver_name}"
-
 load_dotenv()  # load -> os env (enviroment variables)
 print(os.environ.get("AZURE_DATABASE_URL"), os.environ.get("FORM_SECRET_KEY"))
 
