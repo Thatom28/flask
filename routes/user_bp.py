@@ -103,8 +103,8 @@ def welcome_page():
     return render_template("welcome_page.html", username=username, password=password)
 
 
-@user_bp.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for("login_page"))
+# @user_bp.route("/logout")
+# @login_required
+# def logout():
+#     logout_user()
+#     return redirect(url_for("login_page"))
